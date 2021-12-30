@@ -535,6 +535,10 @@ if test "$opt_static_link" = yes; then
 	fi
 fi
 
+# TODO: trigger this via configure option
+# enable position-independent code for library creation
+CFLAGS="$CFLAGS -fPIC"
+
 # set the appropriate make variables for building the "build tools"
 # modify defaults based on whether or not we are cross compiling, since the
 # options for the target host may not be appropriate for the build host
