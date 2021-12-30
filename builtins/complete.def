@@ -51,6 +51,7 @@ $END
 
 #include <config.h>
 
+#if defined (PROGRAMMABLE_COMPLETION)
 #include <stdio.h>
 
 #include "../bashtypes.h"
@@ -916,3 +917,4 @@ compopt_builtin (WORD_LIST *list)
 
   return (ret);
 }
+#endif /* PROGRAMMABLE_COMPLETION */
