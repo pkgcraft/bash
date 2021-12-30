@@ -118,6 +118,10 @@ Version = @BASHVERS@
 PatchLevel = `$(BUILD_DIR)/$(VERSPROG) -p`
 RELSTATUS = @RELSTATUS@
 
+# scallop targets
+StaticLibrary = libscallop.a
+SharedLibrary = libscallop.so
+
 Machine = @host_cpu@
 OS = @host_os@
 VENDOR = @host_vendor@
@@ -636,6 +640,22 @@ $(Program): $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP) .build
 	ls -l $(Program)
 	-$(SIZE) $(Program)
 
+$(StaticLibrary): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+	$(RM) $@
+	$(AR) $(ARFLAGS) $@ $(OBJECTS)
+	-for lib in $(BUILTINS_DEP) $(LIBDEP); do \
+		for obj in $$($(AR) t $$lib); do \
+			$(AR) q $@ $$(dirname $$lib)/$$obj ;\
+		done ;\
+	done
+	$(RANLIB) $@
+
+$(SharedLibrary): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+	$(RM) $@
+	$(eval SCALLOP_LIBRARY = $(SharedLibrary).$(PACKAGE_VERSION))
+	$(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) \
+		-Wl,-soname,${SCALLOP_LIBRARY} -shared -o ${SCALLOP_LIBRARY} $(OBJECTS) $(LIBS)
+
 .build:	$(SOURCES) config.h Makefile $(DEFDIR)/builtext.h version.h $(VERSPROG)
 	@echo
 	@echo "	  ***********************************************************"
@@ -925,6 +945,11 @@ install:	.made installdirs
 	-( cd $(PO_DIR) ; $(MAKE) $(BASH_MAKEFLAGS) DESTDIR=$(DESTDIR) $@ )
 	-( cd $(LOADABLES_DIR) && $(MAKE) $(BASH_MAKEFLAGS) DESTDIR=$(DESTDIR) $@ )
 
+install-library:
+	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(libdir)
+	$(INSTALL) $(INSTALLMODE) $(SharedLibrary).* $(DESTDIR)$(libdir)
+	cd $(DESTDIR)$(libdir) && ln -sf $(SharedLibrary).* $(SharedLibrary)
+
 install-strip:
 	$(MAKE) $(BASH_MAKEFLAGS) INSTALL_PROGRAM='$(INSTALL_STRIP_PROGRAM)' \
 		prefix=${prefix} exec_prefix=${exec_prefix} \
@@ -1003,7 +1028,7 @@ LIB_SUBDIRS = ${RL_LIBDIR}  ${HIST_LIBDIR} ${TERM_LIBDIR} ${GLOB_LIBDIR} \
 		${INTL_LIBDIR} ${TILDE_LIBDIR} ${ALLOC_LIBDIR} ${SH_LIBDIR}
 
 basic-clean:
-	$(RM) $(OBJECTS) $(Program) bashbug
+	$(RM) $(OBJECTS) $(Program) $(StaticLibrary) $(SharedLibrary)* bashbug
 	$(RM) .build .made version.h 
 
 clean:	basic-clean
