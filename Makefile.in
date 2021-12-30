@@ -113,6 +113,7 @@ VERSPROG = bashversion$(EXEEXT)
 VERSOBJ = bashversion.$(OBJEXT)
 
 Program = bash$(EXEEXT)
+Library = libbash.a
 Version = @BASHVERS@
 PatchLevel = `$(BUILD_DIR)/$(VERSPROG) -p`
 RELSTATUS = @RELSTATUS@
@@ -596,6 +597,16 @@ $(Program): $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP) .build
 	ls -l $(Program)
 	-$(SIZE) $(Program)
 
+$(Library): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+	$(RM) $@
+	$(AR) $(ARFLAGS) $@ $(OBJECTS)
+	-for lib in $(BUILTINS_DEP) $(LIBDEP); do \
+		for obj in $$($(AR) t $$lib); do \
+			$(AR) q $@ $$(dirname $$lib)/$$obj ;\
+		done ;\
+	done
+	$(RANLIB) $@
+
 .build:	$(SOURCES) config.h Makefile $(DEFDIR)/builtext.h version.h $(VERSPROG)
 	@echo
 	@echo "	  ***********************************************************"
@@ -901,7 +912,7 @@ LIB_SUBDIRS = ${RL_LIBDIR}  ${HIST_LIBDIR} ${TERM_LIBDIR} ${GLOB_LIBDIR} \
 		${INTL_LIBDIR} ${TILDE_LIBDIR} ${ALLOC_LIBDIR} ${SH_LIBDIR}
 
 basic-clean:
-	$(RM) $(OBJECTS) $(Program) bashbug
+	$(RM) $(OBJECTS) $(Program) $(Library) bashbug
 	$(RM) .build .made version.h 
 
 clean:	basic-clean
