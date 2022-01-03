@@ -18,6 +18,9 @@
    along with Bash.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#if !defined (_SHELL_H_)
+#define _SHELL_H_
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -238,3 +241,11 @@ extern void restore_parser_state PARAMS((sh_parser_state_t *));
 
 extern sh_input_line_state_t *save_input_line_state PARAMS((sh_input_line_state_t *));
 extern void restore_input_line_state PARAMS((sh_input_line_state_t *));
+
+#if defined (NO_MAIN_ENV_ARG)
+extern int bash_main PARAMS((int argc, char **argv));
+#else /* !NO_MAIN_ENV_ARG */
+extern int bash_main PARAMS((int argc, char **argv, char **env));
+#endif /* !NO_MAIN_ENV_ARG */
+
+#endif	/* _SHELL_H_ */
