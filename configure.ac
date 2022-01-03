@@ -247,6 +247,7 @@ dnl options that alter how bash is compiled and linked
 AC_ARG_ENABLE(mem-scramble, AC_HELP_STRING([--enable-mem-scramble], [scramble memory on calls to malloc and free]), opt_memscramble=$enableval)
 AC_ARG_ENABLE(profiling, AC_HELP_STRING([--enable-profiling], [allow profiling with gprof]), opt_profiling=$enableval)
 AC_ARG_ENABLE(static-link, AC_HELP_STRING([--enable-static-link], [link bash statically, for use as a root shell]), opt_static_link=$enableval)
+AC_ARG_ENABLE(library, AC_HELP_STRING([--enable-library], [build bash as a library]), opt_library=$enableval)
 
 dnl So-called `precious' variables
 AC_ARG_VAR([CC_FOR_BUILD], [C compiler used when compiling binaries used only at build time])
@@ -357,6 +358,9 @@ fi
 
 if test $opt_memscramble = yes; then
 AC_DEFINE(MEMSCRAMBLE)
+fi
+if test $opt_library = yes; then
+AC_DEFINE(BUILD_LIBRARY)
 fi
 
 if test "$opt_minimal_config" = yes; then

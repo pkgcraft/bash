@@ -356,12 +356,20 @@ _cygwin32_check_tmp ()
 #if defined (NO_MAIN_ENV_ARG)
 /* systems without third argument to main() */
 int
+#if defined (BUILD_LIBRARY)
+bash_main (argc, argv)
+#else
 main (argc, argv)
+#endif
      int argc;
      char **argv;
 #else /* !NO_MAIN_ENV_ARG */
 int
+#if defined (BUILD_LIBRARY)
+bash_main (argc, argv, env)
+#else
 main (argc, argv, env)
+#endif
      int argc;
      char **argv, **env;
 #endif /* !NO_MAIN_ENV_ARG */
