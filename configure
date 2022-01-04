@@ -894,6 +894,7 @@ enable_xpg_echo_default
 enable_mem_scramble
 enable_profiling
 enable_static_link
+enable_library
 enable_largefile
 enable_nls
 enable_threads
@@ -1620,6 +1621,7 @@ Optional Features:
   --enable-mem-scramble   scramble memory on calls to malloc and free
   --enable-profiling      allow profiling with gprof
   --enable-static-link    link bash statically, for use as a root shell
+  --enable-library        build bash as a library
   --disable-largefile     omit support for large files
   --disable-nls           do not use Native Language Support
   --enable-threads={isoc|posix|isoc+posix|windows}
@@ -3750,6 +3752,12 @@ then :
   enableval=$enable_static_link; opt_static_link=$enableval
 fi
 
+# Check whether --enable-library was given.
+if test ${enable_library+y}
+then :
+  enableval=$enable_library; opt_library=$enableval
+fi
+
 
 
 
@@ -3903,6 +3911,10 @@ fi
 
 if test $opt_memscramble = yes; then
 printf "%s\n" "#define MEMSCRAMBLE 1" >>confdefs.h
+
+fi
+if test $opt_library = yes; then
+printf "%s\n" "#define BUILD_LIBRARY 1" >>confdefs.h
 
 fi
 
@@ -5412,6 +5424,10 @@ if test "$opt_static_link" = yes; then
 		esac
 	fi
 fi
+
+# TODO: trigger this via configure option
+# enable position-independent code for library creation
+CFLAGS="$CFLAGS -fPIC"
 
 # set the appropriate make variables for building the "build tools"
 # modify defaults based on whether or not we are cross compiling, since the
@@ -9357,8 +9373,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS=$save_LIBS
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:9360: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:9361: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:9376: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:9377: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -9384,7 +9400,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:9387: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:9403: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -9562,7 +9578,7 @@ fi
 
         fi
       fi
-      echo "$as_me:9565: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:9581: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -9809,8 +9825,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS=$save_LIBS
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:9812: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:9813: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:9828: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:9829: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -9836,7 +9852,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:9839: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:9855: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -10014,7 +10030,7 @@ fi
 
         fi
       fi
-      echo "$as_me:10017: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:10033: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
