@@ -22,6 +22,7 @@
 #  define __COMMON_H
 
 #include "stdc.h"
+#include "builtins.h"
 
 #define ISOPTION(s, c)	(s[0] == '-' && s[1] == c && !s[2])
 #define ISHELP(s)	(STREQ ((s), "--help"))
@@ -85,6 +86,7 @@ extern void builtin_warning PARAMS((const char *, ...))  __attribute__((__format
 extern void builtin_usage PARAMS((void));
 extern void no_args PARAMS((WORD_LIST *));
 extern int no_options PARAMS((WORD_LIST *));
+extern int register_builtins PARAMS((struct builtin **, int));
 
 /* common error message functions */
 extern void sh_needarg PARAMS((char *));
