@@ -1081,3 +1081,39 @@ set_expand_once (int nval, int uwp)
   return oa;
 }
 #endif
+
+#if defined (BUILD_LIBRARY)
+/* Register a given array of new builtins into the internal list.
+ * (Mostly copied from the enable builtin used when loading dynamic builtins.)
+ */
+int
+register_builtins (struct builtin **new_builtins, size_t num_new_builtins)
+{
+  size_t total, size, replaced;
+  struct builtin *new_shell_builtins;
+
+  total = num_shell_builtins + num_new_builtins;
+  size = (total + 1) * sizeof (struct builtin);
+
+  new_shell_builtins = (struct builtin *)xmalloc (size);
+  FASTCOPY ((char *)shell_builtins, (char *)new_shell_builtins,
+    num_shell_builtins * sizeof (struct builtin));
+  for (replaced = 0; replaced < num_new_builtins; replaced++)
+    FASTCOPY ((char *)new_builtins[replaced],
+    (char *)&new_shell_builtins[num_shell_builtins + replaced],
+    sizeof (struct builtin));
+
+  new_shell_builtins[total].name = (char *)0;
+  new_shell_builtins[total].function = (sh_builtin_func_t *)0;
+  new_shell_builtins[total].flags = 0;
+
+  if (shell_builtins != static_shell_builtins)
+    free (shell_builtins);
+
+  shell_builtins = new_shell_builtins;
+  num_shell_builtins = total;
+  initialize_shell_builtins ();
+
+  return (EXECUTION_SUCCESS);
+}
+#endif
