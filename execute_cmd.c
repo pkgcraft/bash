@@ -5598,6 +5598,7 @@ execute_disk_command (words, redirects, command_line, pipe_in, pipe_out,
   char *pathname, *command, **args, *p;
   int nofork, stdpath, result, fork_flags;
   pid_t pid;
+  sh_builtin_func_t *hookb;
   SHELL_VAR *hookf;
   WORD_LIST *wl;
 
@@ -5723,8 +5724,9 @@ execute_disk_command (words, redirects, command_line, pipe_in, pipe_out,
 
       if (command == 0)
 	{
+	  hookb = find_shell_builtin (NOTFOUND_HOOK);
 	  hookf = find_function (NOTFOUND_HOOK);
-	  if (hookf == 0)
+	  if (hookb == 0 && hookf == 0)
 	    {
 	      /* Make sure filenames are displayed using printable characters */
 	      pathname = printable_filename (pathname, 0);
@@ -5742,7 +5744,13 @@ execute_disk_command (words, redirects, command_line, pipe_in, pipe_out,
 #endif
 
 	  wl = make_word_list (make_word (NOTFOUND_HOOK), words);
-	  exit (execute_shell_function (hookf, wl));
+	  if (hookb != 0)
+	    {
+	      this_command_name = NOTFOUND_HOOK;
+	      exit (execute_builtin (hookb, wl, 0, 0));
+	    }
+	  else
+	    exit (execute_shell_function (hookf, wl));
 	}
 
       /* Execve expects the command name to be in args[0].  So we
