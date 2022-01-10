@@ -248,4 +248,9 @@ extern int bash_main PARAMS((int argc, char **argv));
 extern int bash_main PARAMS((int argc, char **argv, char **env));
 #endif /* !NO_MAIN_ENV_ARG */
 
+#if defined (BUILD_LIBRARY)
+extern void lib_init PARAMS((void));
+extern void lib_reset PARAMS((void));
+#endif
+
 #endif	/* _SHELL_H_ */
