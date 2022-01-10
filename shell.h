@@ -260,4 +260,9 @@ extern int bash_main (int argc, char **argv);
 extern int bash_main (int argc, char **argv, char **env);
 #endif /* !NO_MAIN_ENV_ARG */
 
+#if defined (BUILD_LIBRARY)
+extern void lib_init (void);
+extern void lib_reset (void);
+#endif
+
 #endif	/* _SHELL_H_ */
