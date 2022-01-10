@@ -2061,6 +2061,23 @@ shell_reinitialize (void)
   shell_reinitialized = 1;
 }
 
+#if defined (BUILD_LIBRARY)
+void
+lib_init ()
+{
+  shell_initialize();
+}
+
+void
+lib_reset ()
+{
+  shell_reinitialize();
+  initialize_shell_variables (shell_environment, privileged_mode||running_setuid);
+  initialize_shell_options (privileged_mode||running_setuid);
+  initialize_bashopts (privileged_mode||running_setuid);
+}
+#endif
+
 static void
 show_shell_usage (FILE *fp, int extra)
 {
