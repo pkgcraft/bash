@@ -136,4 +136,9 @@ extern void uw_close (void *);
 
 extern void init_notfound_str (void);
 
+#if defined (BUILD_LIBRARY)
+extern int scallop_execute_command (COMMAND *);
+extern int scallop_execute_shell_function (SHELL_VAR *, WORD_LIST *);
+#endif
+
 #endif /* _EXECUTE_CMD_H_ */
