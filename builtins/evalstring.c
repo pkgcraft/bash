@@ -864,3 +864,19 @@ evalstring (char *string, const char *from_file, int flags)
     
   return (r);
 }
+
+#if defined (BUILD_LIBRARY)
+int
+scallop_evalstring (const char *string, int flags)
+{
+  int code, result;
+
+  code = setjmp_nosigs (top_level);
+  if (code) {
+    return EXECUTION_FAILURE;
+  }
+
+  result = evalstring((char *)string, "scallop", flags | SEVAL_NOFREE);
+  return result;
+}
+#endif
