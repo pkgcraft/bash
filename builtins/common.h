@@ -91,6 +91,8 @@ extern int no_options PARAMS((WORD_LIST *));
 #if defined (BUILD_LIBRARY)
 /* scallop extensions */
 extern int register_builtins PARAMS((struct builtin **, size_t));
+extern int scallop_source_file PARAMS((const char *));
+extern int scallop_evalstring PARAMS((const char *, int));
 #endif
 
 /* common error message functions */

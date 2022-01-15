@@ -7210,6 +7210,14 @@ command_substitute (string, quoted, flags)
 	kill (getpid (), SIGINT);
 #endif /* JOB_CONTROL */
 
+#if defined (BUILD_LIBRARY)
+	if (last_command_exit_value == EX_LONGJMP)
+	{
+	  last_command_exit_value = EXECUTION_FAILURE;
+	  jump_to_top_level (ERREXIT);
+	}
+#endif
+
       ret = alloc_word_desc ();
       ret->word = istring;
       ret->flags = tflag;

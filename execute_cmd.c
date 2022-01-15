@@ -731,6 +731,14 @@ execute_command_internal (command, asynchronous, pipe_in, pipe_out,
 		  jump_to_top_level (ERREXIT);
 		}
 
+#if defined (BUILD_LIBRARY)
+	      if (last_command_exit_value == EX_LONGJMP)
+		{
+		  last_command_exit_value = EXECUTION_FAILURE;
+		  jump_to_top_level (ERREXIT);
+		}
+#endif
+
 	      return (last_command_exit_value);
 	    }
 	  else
@@ -4742,7 +4750,7 @@ run_builtin:
 	     cmdflags);
 	  if (builtin)
 	    {
-	      if (result > EX_SHERRBASE)
+	      if (result > EX_SHERRBASE || result == EX_LONGJMP)
 		{
 		  switch (result)
 		    {
@@ -4756,6 +4764,12 @@ run_builtin:
 			  jump_to_top_level (ERREXIT);
 			}
 		      break;
+#if defined (BUILD_LIBRARY)
+		    case EX_LONGJMP:
+		      last_command_exit_value = EXECUTION_FAILURE;
+		      jump_to_top_level (ERREXIT);
+		      break;
+#endif
 		    case EX_DISKFALLBACK:
 		      /* XXX - experimental */
 		      executing_builtin = old_builtin;
@@ -6238,3 +6252,38 @@ do_piping (pipe_in, pipe_out)
 #endif /* __CYGWIN__ */
     }
 }
+
+#if defined (BUILD_LIBRARY)
+int
+scallop_execute_command (command)
+     COMMAND *command;
+{
+  int code, result;
+
+  code = setjmp_nosigs (top_level);
+  if (code) {
+    return EXECUTION_FAILURE;
+  }
+
+  result = execute_command(command);
+  QUIT;
+  return result;
+}
+
+int
+scallop_execute_shell_function (var, words)
+     SHELL_VAR *var;
+     WORD_LIST *words;
+{
+  int code, result;
+
+  code = setjmp_nosigs (top_level);
+  if (code) {
+    return EXECUTION_FAILURE;
+  }
+
+  result = execute_shell_function(var, words);
+  QUIT;
+  return result;
+}
+#endif

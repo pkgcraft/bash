@@ -3207,6 +3207,14 @@ wait_for_return:
 
   UNBLOCK_CHILD (oset);
 
+#if defined (BUILD_LIBRARY)
+	if (termination_state == EX_LONGJMP)
+	{
+	  last_command_exit_value = EXECUTION_FAILURE;
+	  jump_to_top_level (ERREXIT);
+	}
+#endif
+
   return (termination_state);
 }
 
