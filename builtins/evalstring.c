@@ -714,6 +714,15 @@ evalstring (string, from_file, flags)
   volatile int r, rflag, rcatch;
   volatile int was_trap;
 
+#if defined (BUILD_LIBRARY)
+  int code;
+  code = setjmp_nosigs (top_level);
+  if (code) {
+    lib_reset ();
+    return EXECUTION_FAILURE;
+  }
+#endif
+
   /* Are we running a trap when we execute this function? */
   was_trap = running_trap;
 
