@@ -120,4 +120,9 @@ extern void close_all_files PARAMS((void));
 extern void restore_funcarray_state PARAMS((struct func_array_state *));
 #endif
 
+#if defined (BUILD_LIBRARY)
+extern int scallop_execute_command PARAMS((COMMAND *));
+extern int scallop_execute_shell_function PARAMS((SHELL_VAR *, WORD_LIST *));
+#endif
+
 #endif /* _EXECUTE_CMD_H_ */
