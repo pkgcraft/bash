@@ -382,3 +382,20 @@ source_file (filename, sflags)
   run_return_trap ();
   return rval;
 }
+
+#if defined (BUILD_LIBRARY)
+int
+scallop_source_file (filename)
+     const char *filename;
+{
+  int code, result;
+
+  code = setjmp_nosigs (top_level);
+  if (code) {
+    return EXECUTION_FAILURE;
+  }
+
+  result = source_file(filename, 0);
+  return result;
+}
+#endif
