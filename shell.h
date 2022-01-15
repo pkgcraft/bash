@@ -68,6 +68,7 @@ extern int EOF_Reached;
 #define EX_NOINPUT	126
 #define EX_NOTFOUND	127
 
+#define EX_LONGJMP	255	/* longjmp to top level */
 #define EX_SHERRBASE	256	/* all special error values are > this. */
 
 #define EX_BADSYNTAX	257	/* shell syntax error */
