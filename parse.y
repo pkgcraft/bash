@@ -72,6 +72,7 @@
 #  include "jobs.h"
 #else
 extern int cleanup_dead_jobs PARAMS((void));
+extern int count_all_jobs PARAMS((void));
 #endif /* JOB_CONTROL */
 
 #if defined (ALIAS)
