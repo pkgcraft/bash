@@ -80,47 +80,64 @@ sh_builtin_func_t *this_shell_builtin = (sh_builtin_func_t *)NULL;
    shell. */
 
 static void
-builtin_error_prolog (void)
+builtin_error_prolog (char *buf)
 {
   char *name;
+  int line;
 
   name = get_name_for_error ();
-  fprintf (stderr, "%s: ", name);
+  snprintf(buf, MAX_ERROR_LEN, "%s: ", name);
 
-  if (interactive_shell == 0)
-    fprintf (stderr, _("line %d: "), executing_line_number ());
+  if (interactive_shell == 0) {
+    line = executing_line_number ();
+    if (line != 0) {
+      snprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), _("line %d: "), line);
+    }
+  }
 
   if (this_command_name && *this_command_name)
-    fprintf (stderr, "%s: ", this_command_name);
+    snprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), "%s: ", this_command_name);
 }
 
 void
 builtin_error (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  builtin_error_prolog ();
+  builtin_error_prolog (&buf[0]);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
-  fprintf (stderr, "\n");
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 void
 builtin_warning (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  builtin_error_prolog ();
-  fprintf (stderr, _("warning: "));
+  builtin_error_prolog (&buf[0]);
+#if !defined (BUILD_LIBRARY)
+  snprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), _("warning: "));
+#endif
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
-  fprintf (stderr, "\n");
+
+#if defined (BUILD_LIBRARY)
+  scallop_warning(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 /* Print a usage summary for the currently-executing builtin command. */
