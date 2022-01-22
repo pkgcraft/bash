@@ -70,4 +70,7 @@ extern void err_badarraysub PARAMS((const char *));
 extern void err_unboundvar PARAMS((const char *));
 extern void err_readonly PARAMS((const char *));
 
+/* Maximum length of an error message, the rest is truncated. */
+#define MAX_ERROR_LEN 512
+
 #endif /* !_ERROR_H_ */

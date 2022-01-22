@@ -2032,9 +2032,15 @@ shell_reinitialize ()
 }
 
 #if defined (BUILD_LIBRARY)
+scallop_cb scallop_error;
+scallop_cb scallop_warning;
+
 void
-lib_init ()
+lib_init (error_cb, warning_cb)
+     scallop_cb error_cb, warning_cb;
 {
+  scallop_error = error_cb;
+  scallop_warning = warning_cb;
   shell_initialize();
 }
 
