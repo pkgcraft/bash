@@ -81,4 +81,7 @@ extern void err_invalidid (const char *);
 #  define INTERNAL_DEBUG(x)
 #endif
 
+/* Maximum length of an error message, the rest is truncated. */
+#define MAX_ERROR_LEN 512
+
 #endif /* !_ERROR_H_ */

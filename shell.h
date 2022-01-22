@@ -262,7 +262,11 @@ extern int bash_main (int argc, char **argv, char **env);
 #endif /* !NO_MAIN_ENV_ARG */
 
 #if defined (BUILD_LIBRARY)
-extern void lib_init (void);
+typedef void (*scallop_cb)(char *);
+extern scallop_cb scallop_error;
+extern scallop_cb scallop_warning;
+
+extern void lib_init (scallop_cb error_cb, scallop_cb warning_cb);
 extern void lib_reset (void);
 #endif
 
