@@ -58,7 +58,7 @@ extern int give_terminal_to (pid_t, int);
 extern const char * const bash_badsub_errmsg;
 #endif
 
-static void error_prolog (int);
+static void error_prolog (int, char *);
 
 /* The current maintainer of the shell.  You change this in the
    Makefile. */
@@ -71,7 +71,7 @@ const char * const the_current_maintainer = MAINTAINER;
 int gnu_error_format = 0;
 
 static void
-error_prolog (int print_lineno)
+error_prolog (int print_lineno, char *buf)
 {
   char *ename;
   int line;
@@ -80,9 +80,9 @@ error_prolog (int print_lineno)
   line = (print_lineno && interactive_shell == 0) ? executing_line_number () : -1;
 
   if (line > 0)
-    fprintf (stderr, "%s:%s%d: ", ename, gnu_error_format ? "" : _(" line "), line);
+    snprintf (buf, MAX_ERROR_LEN, "%s:%s%d: ", ename, gnu_error_format ? "" : _(" line "), line);
   else
-    fprintf (stderr, "%s: ", ename);
+    snprintf (buf, MAX_ERROR_LEN, "%s: ", ename);
 }
 
 /* Return the name of the shell or the shell script for error reporting. */
@@ -132,6 +132,7 @@ void
 programming_error (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
   char *h;
 
 #if defined (JOB_CONTROL)
@@ -139,10 +140,13 @@ programming_error (const char *format, ...)
 #endif /* JOB_CONTROL */
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
 
 #if defined (HISTORY)
   if (remember_on_history)
@@ -158,6 +162,7 @@ programming_error (const char *format, ...)
 
   fprintf (stderr, _("Aborting..."));
   fflush (stderr);
+#endif /* BUILD_LIBRARY */
 
   abort ();
 }
@@ -170,15 +175,20 @@ void
 report_error (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  error_prolog (1);
+  error_prolog (1, &buf[0]);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
+
   if (exit_immediately_on_error)
     {
       if (last_command_exit_value == 0)
@@ -191,15 +201,20 @@ void
 fatal_error (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  error_prolog (0);
+  error_prolog (0, &buf[0]);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
+
   sh_exit (2);
 }
 
@@ -207,48 +222,64 @@ void
 internal_error (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  error_prolog (1);
+  error_prolog (1, &buf[0]);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 void
 internal_warning (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  error_prolog (1);
+  error_prolog (1, &buf[0]);
+#if !defined (BUILD_LIBRARY)
   fprintf (stderr, _("warning: "));
+#endif
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_warning(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 void
 internal_inform (const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
-  error_prolog (1);
+  error_prolog (1, &buf[0]);
   /* TRANSLATORS: this is a prefix for informational messages. */
+#if !defined (BUILD_LIBRARY)
   fprintf (stderr, _("INFORM: "));
+#endif
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_warning(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 void
@@ -276,16 +307,21 @@ sys_error (const char *format, ...)
 {
   int e;
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
 
   e = errno;
-  error_prolog (0);
+  error_prolog (0, &buf[0]);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, ": %s\n", strerror (e));
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+  snprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), ": %s", strerror (e));
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 }
 
 /* An error from the parser takes the general form
@@ -300,26 +336,30 @@ void
 parser_error (int lineno, const char *format, ...)
 {
   va_list args;
+  char buf[MAX_ERROR_LEN] = "";
   char *ename, *iname;
 
   ename = get_name_for_error ();
   iname = yy_input_name ();
 
   if (interactive)
-    fprintf (stderr, "%s: ", ename);
+    snprintf (buf, MAX_ERROR_LEN, "%s: ", ename);
   else if (interactive_shell)
-    fprintf (stderr, "%s: %s:%s%d: ", ename, iname, gnu_error_format ? "" : _(" line "), lineno);
+    snprintf (buf, MAX_ERROR_LEN, "%s: %s:%s%d: ", ename, iname, gnu_error_format ? "" : _(" line "), lineno);
   else if (STREQ (ename, iname))
-    fprintf (stderr, "%s:%s%d: ", ename, gnu_error_format ? "" : _(" line "), lineno);
+    snprintf (buf, MAX_ERROR_LEN, "%s:%s%d: ", ename, gnu_error_format ? "" : _(" line "), lineno);
   else
-    fprintf (stderr, "%s: %s:%s%d: ", ename, iname, gnu_error_format ? "" : _(" line "), lineno);
+    snprintf (buf, MAX_ERROR_LEN, "%s: %s:%s%d: ", ename, iname, gnu_error_format ? "" : _(" line "), lineno);
 
   va_start (args, format);
-
-  vfprintf (stderr, format, args);
-  fprintf (stderr, "\n");
-
+  vsnprintf(buf + strlen(buf), MAX_ERROR_LEN - strlen(buf), format, args);
   va_end (args);
+
+#if defined (BUILD_LIBRARY)
+  scallop_error(buf);
+#else
+  fprintf (stderr, "%s\n", buf);
+#endif
 
   if (exit_immediately_on_error)
     exit_shell (last_command_exit_value = 2);
