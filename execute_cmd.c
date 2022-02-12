@@ -4618,6 +4618,11 @@ run_builtin:
 			  jump_to_top_level (ERREXIT);
 			}
 		      break;
+		    case EX_LONGJMP:
+		      scallop_error((char *)SHM_BUF);
+		      last_command_exit_value = EXECUTION_FAILURE;
+		      jump_to_top_level (ERREXIT);
+		      break;
 		    case EX_DISKFALLBACK:
 		      /* XXX - experimental */
 		      executing_builtin = old_builtin;
