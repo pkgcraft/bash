@@ -116,6 +116,7 @@ extern int terminate_immediately;
 extern sighandler termsig_sighandler PARAMS((int));
 extern void termsig_handler PARAMS((int));
 extern sighandler sigint_sighandler PARAMS((int));
+extern sighandler sigusr1_sighandler PARAMS((int));
 extern void initialize_signals PARAMS((int));
 extern void initialize_terminating_signals PARAMS((void));
 extern void reset_terminating_signals PARAMS((void));
