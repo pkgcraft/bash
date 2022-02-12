@@ -328,6 +328,7 @@ initialize_shell_signals ()
   /* And, some signals that are specifically ignored by the shell. */
   set_signal_handler (SIGQUIT, SIG_IGN);
 
+  set_signal_handler (SIGUSR1, sigusr1_sighandler);
   if (interactive)
     {
       set_signal_handler (SIGINT, sigint_sighandler);
@@ -696,6 +697,21 @@ sigint_sighandler (sig)
   else if (RL_ISSTATE (RL_STATE_SIGHANDLER))
     bashline_set_event_hook ();
 #endif
+
+  SIGRETURN (0);
+}
+
+sighandler
+sigusr1_sighandler (sig)
+     int sig;
+{
+#if defined (MUST_REINSTALL_SIGHANDLERS)
+  signal (sig, sigusr1_sighandler);
+#endif
+
+  scallop_error((char *)SHM_BUF);
+  if (interrupt_state == 0)
+    ADDINTERRUPT;
 
   SIGRETURN (0);
 }
