@@ -91,6 +91,13 @@ extern int get_tty_state PARAMS((void));
 #  include <opennt/opennt.h>
 #endif
 
+#if defined (BUILD_LIBRARY)
+#  include <sys/mman.h>
+#  include <sys/stat.h>
+#  include <fcntl.h>
+#  include <unistd.h>
+#endif
+
 #if !defined (HAVE_GETPW_DECLS)
 extern struct passwd *getpwuid ();
 #endif /* !HAVE_GETPW_DECLS */
@@ -331,7 +338,6 @@ static void init_interactive PARAMS((void));
 static void init_noninteractive PARAMS((void));
 static void init_interactive_script PARAMS((void));
 
-static void set_shell_name PARAMS((char *));
 static void shell_initialize PARAMS((void));
 static void shell_reinitialize PARAMS((void));
 
@@ -1764,7 +1770,7 @@ unset_bash_input (check_zero)
 #  define PROGRAM "bash"
 #endif
 
-static void
+void
 set_shell_name (argv0)
      char *argv0;
 {
@@ -2035,13 +2041,52 @@ shell_reinitialize ()
 scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
+static int
+shm_initialize ()
+{
+  char name[64];
+  int fd;
+
+  snprintf(name, 64, "/scallop-%d", getpid());
+
+  fd = shm_open(name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+  if (fd == -1) {
+    fprintf(stderr, "shm_open() failed: %s: %s\n", name, strerror(errno));
+    return -1;
+  }
+
+  if (ftruncate(fd, SHM_SIZE) != 0) {
+    fprintf(stderr, "ftruncate() failed: %s: %s\n", name, strerror(errno));
+    return -1;
+  }
+
+  SHM_BUF = mmap(0, SHM_SIZE, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
+  if (SHM_BUF == MAP_FAILED) {
+    fprintf(stderr, "mmap() failed: %s: %s\n", name, strerror(errno));
+    return -1;
+  }
+
+  if (shm_unlink(name) != 0) {
+    fprintf(stderr, "shm_unlink() failed: %s: %s\n", name, strerror(errno));
+    return -1;
+  }
+
+  return 0;
+}
+
+int
+lib_init ()
+{
+  shell_initialize();
+  return shm_initialize();
+}
+
 void
-lib_init (error_cb, warning_cb)
+lib_error_handlers (error_cb, warning_cb)
      scallop_cb error_cb, warning_cb;
 {
   scallop_error = error_cb;
   scallop_warning = warning_cb;
-  shell_initialize();
 }
 
 void

@@ -52,6 +52,9 @@ extern int errno;
 #  include "bashhist.h"
 #endif
 
+/* Shared memory buffer used to inject errors. */
+void *SHM_BUF;
+
 extern int executing_line_number PARAMS((void));
 
 #if defined (JOB_CONTROL)
@@ -549,4 +552,12 @@ err_readonly (s)
      const char *s;
 {
   report_error (_("%s: readonly variable"), s);
+}
+
+void
+shm_error (s)
+     const char *s;
+{
+  if (SHM_BUF)
+    snprintf(SHM_BUF, SHM_SIZE, "%s", s);
 }

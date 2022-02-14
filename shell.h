@@ -237,12 +237,14 @@ extern int bash_main PARAMS((int argc, char **argv));
 extern int bash_main PARAMS((int argc, char **argv, char **env));
 #endif /* !NO_MAIN_ENV_ARG */
 
+extern void set_shell_name PARAMS((char *));
 #if defined (BUILD_LIBRARY)
 typedef void (*scallop_cb)(char *);
 extern scallop_cb scallop_error;
 extern scallop_cb scallop_warning;
 
-extern void lib_init PARAMS((scallop_cb error_cb, scallop_cb warning_cb));
+extern int lib_init PARAMS((void));
+extern void lib_error_handlers PARAMS((scallop_cb error_cb, scallop_cb warning_cb));
 extern void lib_reset PARAMS((void));
 #endif
 
