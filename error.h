@@ -81,5 +81,7 @@ extern void err_readonly PARAMS((const char *));
 
 /* Maximum length of an error message, the rest is truncated. */
 #define MAX_ERROR_LEN 512
+/* Shared memory buffer used to inject errors. */
+extern void *SHM_BUF;
 
 #endif /* !_ERROR_H_ */

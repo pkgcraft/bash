@@ -1797,7 +1797,7 @@ unset_bash_input (check_zero)
 #  define PROGRAM "bash"
 #endif
 
-static void
+void
 set_shell_name (argv0)
      char *argv0;
 {
@@ -2069,12 +2069,17 @@ scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
 void
-lib_init (error_cb, warning_cb)
+lib_init ()
+{
+  shell_initialize();
+}
+
+void
+lib_error_handlers (error_cb, warning_cb)
      scallop_cb error_cb, warning_cb;
 {
   scallop_error = error_cb;
   scallop_warning = warning_cb;
-  shell_initialize();
 }
 
 void
