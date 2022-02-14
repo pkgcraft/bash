@@ -48,6 +48,8 @@ extern int errno;
 #endif
 
 extern int executing_line_number (void);
+/* Shared memory buffer used to inject errors. */
+void *SHM_BUF;
 
 #if defined (JOB_CONTROL)
 extern pid_t shell_pgrp;
