@@ -52,6 +52,9 @@ extern int errno;
 #  include "bashhist.h"
 #endif
 
+/* Shared memory buffer used to inject errors. */
+void *SHM_BUF;
+
 extern int executing_line_number PARAMS((void));
 
 #if defined (JOB_CONTROL)
