@@ -2066,11 +2066,16 @@ scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
 void
-lib_init (scallop_cb error_cb, scallop_cb warning_cb)
+lib_init ()
+{
+  shell_initialize();
+}
+
+void
+lib_error_handlers (scallop_cb error_cb, scallop_cb warning_cb)
 {
   scallop_error = error_cb;
   scallop_warning = warning_cb;
-  shell_initialize();
 }
 
 void
