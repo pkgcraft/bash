@@ -4872,7 +4872,8 @@ just_bail:
   if (shell_tty != fileno (stderr))
     SET_CLOSE_ON_EXEC (shell_tty);
 
-  set_signal_handler (SIGCHLD, sigchld_handler);
+  if (job_control)
+    set_signal_handler (SIGCHLD, sigchld_handler);
 
   change_flag ('m', job_control ? '-' : '+');
 
