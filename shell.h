@@ -244,7 +244,7 @@ typedef void (*scallop_cb)(char *);
 extern scallop_cb scallop_error;
 extern scallop_cb scallop_warning;
 
-extern int lib_init PARAMS((void));
+extern void *lib_init PARAMS((size_t));
 extern void lib_error_handlers PARAMS((scallop_cb error_cb, scallop_cb warning_cb));
 extern void lib_reset PARAMS((void));
 #endif

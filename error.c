@@ -52,6 +52,8 @@ extern int errno;
 #  include "bashhist.h"
 #endif
 
+/* Maximum length of an error message from shared memory. */
+size_t SHM_SIZE = 0;
 /* Shared memory buffer used to inject errors. */
 void *SHM_BUF;
 
@@ -552,12 +554,4 @@ err_readonly (s)
      const char *s;
 {
   report_error (_("%s: readonly variable"), s);
-}
-
-void
-shm_error (s)
-     const char *s;
-{
-  if (SHM_BUF)
-    snprintf(SHM_BUF, SHM_SIZE, "%s", s);
 }
