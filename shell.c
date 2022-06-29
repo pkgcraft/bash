@@ -2041,44 +2041,47 @@ shell_reinitialize ()
 scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
-static int
-shm_initialize ()
+void *
+shm_initialize (shm_size)
+     size_t shm_size;
 {
   char name[64];
   int fd;
+  SHM_SIZE = shm_size;
 
   snprintf(name, 64, "/scallop-%d", getpid());
 
   fd = shm_open(name, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
   if (fd == -1) {
     fprintf(stderr, "shm_open() failed: %s: %s\n", name, strerror(errno));
-    return -1;
+    return NULL;
   }
 
   if (ftruncate(fd, SHM_SIZE) != 0) {
     fprintf(stderr, "ftruncate() failed: %s: %s\n", name, strerror(errno));
-    return -1;
+    return NULL;
   }
 
   SHM_BUF = mmap(0, SHM_SIZE, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
   if (SHM_BUF == MAP_FAILED) {
     fprintf(stderr, "mmap() failed: %s: %s\n", name, strerror(errno));
-    return -1;
+    return NULL;
   }
 
   if (shm_unlink(name) != 0) {
     fprintf(stderr, "shm_unlink() failed: %s: %s\n", name, strerror(errno));
-    return -1;
+    return NULL;
   }
 
-  return 0;
+  return SHM_BUF;
 }
 
-int
-lib_init ()
+void *
+lib_init (shm_size)
+     size_t shm_size;
 {
   shell_initialize();
-  return shm_initialize();
+  return shm_initialize(shm_size);
 }
 
 void

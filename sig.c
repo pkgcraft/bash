@@ -709,7 +709,6 @@ sigusr1_sighandler (sig)
   signal (sig, sigusr1_sighandler);
 #endif
 
-  scallop_error((char *)SHM_BUF);
   if (interrupt_state == 0)
     ADDINTERRUPT;
 
