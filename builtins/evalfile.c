@@ -375,7 +375,6 @@ source_file (filename, sflags)
   int code;
   code = setjmp_nosigs (top_level);
   if (code) {
-    lib_reset ();
     return EXECUTION_FAILURE;
   }
 #endif
