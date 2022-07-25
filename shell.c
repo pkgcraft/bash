@@ -2097,6 +2097,8 @@ lib_reset ()
 {
   shell_reinitialize();
   initialize_shell_variables (shell_environment, privileged_mode||running_setuid);
+  initialize_shell_options (privileged_mode||running_setuid);
+  initialize_bashopts (privileged_mode||running_setuid);
 }
 #endif
 
