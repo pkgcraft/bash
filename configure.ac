@@ -1375,12 +1375,7 @@ AC_SUBST(LOCAL_DEFS)
 AC_CONFIG_FILES([Makefile builtins/Makefile lib/readline/Makefile \
 		 lib/glob/Makefile lib/intl/Makefile \
 		 lib/malloc/Makefile lib/sh/Makefile lib/termcap/Makefile \
-		 lib/tilde/Makefile doc/Makefile support/Makefile \
-		 po/Makefile.in examples/loadables/Makefile \
-		 examples/loadables/Makefile.inc \
-		 examples/loadables/Makefile.sample \
-		 examples/loadables/perl/Makefile \
-		 support/bash.pc support/bashbug.sh])
+		 lib/tilde/Makefile])
 
 dnl Makefile uses this timestamp file to record whether config.h is up to date.
 AC_CONFIG_COMMANDS([stamp-h], [echo timestamp > stamp-h])
