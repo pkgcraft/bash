@@ -257,6 +257,8 @@ extern scallop_cb scallop_warning;
 extern void lib_init PARAMS((void));
 extern void lib_error_handlers PARAMS((scallop_cb error_cb, scallop_cb warning_cb));
 extern void lib_reset PARAMS((void));
+
+extern void scallop_toggle_restricted PARAMS((int));
 #endif
 
 #endif	/* _SHELL_H_ */
