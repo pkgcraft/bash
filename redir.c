@@ -916,7 +916,7 @@ do_redirection_internal (REDIRECT *redirect, int flags, char **fnp)
 	return (AMBIGUOUS_REDIRECT);
 
 #if defined (RESTRICTED_SHELL)
-      if (restricted && (WRITE_REDIRECT (ri)))
+      if (restricted && (WRITE_REDIRECT (ri)) && (strcmp(redirectee_word, "/dev/null") != 0))
 	{
 	  free (redirectee_word);
 	  return (RESTRICTED_REDIRECT);
