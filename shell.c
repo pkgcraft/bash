@@ -2085,10 +2085,40 @@ lib_error_handlers (error_cb, warning_cb)
 void
 lib_reset ()
 {
+  int orig_restricted = restricted;
   shell_reinitialize();
-  initialize_shell_variables (shell_environment, privileged_mode||running_setuid);
-  initialize_shell_options (privileged_mode||running_setuid);
-  initialize_bashopts (privileged_mode||running_setuid);
+  restricted = orig_restricted;
+  initialize_shell_variables (shell_environment, privileged_mode||restricted||running_setuid);
+  initialize_shell_options (privileged_mode||restricted||running_setuid);
+  initialize_bashopts (privileged_mode||restricted||running_setuid);
+
+  // reinitialization resets restricted status, so re-enable it if requested
+  if (orig_restricted) {
+    scallop_toggle_restricted(orig_restricted);
+  }
+}
+
+void
+scallop_toggle_restricted (status)
+     int status;
+{
+  if (status && !restricted) {
+      bind_variable ("PATH", "/dev/null", 0);
+      stupidly_hack_special_variables ("PATH"); /* clear hash table */
+      set_var_read_only ("PATH");
+      set_var_read_only ("SHELL");
+      set_var_read_only ("ENV");
+      set_var_read_only ("BASH_ENV");
+      set_var_read_only ("HISTFILE");
+      restricted = 1;
+  } else if (!status && restricted) {
+      restricted = 0;
+      set_var_read_write ("PATH");
+      set_var_read_write ("SHELL");
+      set_var_read_write ("ENV");
+      set_var_read_write ("BASH_ENV");
+      set_var_read_write ("HISTFILE");
+  }
 }
 #endif
 
