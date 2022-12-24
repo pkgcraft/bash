@@ -68,7 +68,7 @@
 
 /* If you want to unconditionally set a value for PATH in every restricted
    shell, set this. */
-/* #define RBASH_STATIC_PATH_VALUE "/rbin:/usr/rbin" */
+#define RBASH_STATIC_PATH_VALUE "/dev/null"
 
 /* The value for PATH when invoking `command -p'.  This is only used when
    the Posix.2 confstr () function, or CS_PATH define are not present. */
