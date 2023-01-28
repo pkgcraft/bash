@@ -2068,6 +2068,7 @@ scallop_cb scallop_warning;
 void
 lib_init ()
 {
+  set_shell_name("scallop");
   shell_initialize();
 }
 
