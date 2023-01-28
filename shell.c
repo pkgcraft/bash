@@ -2069,11 +2069,13 @@ scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
 void
-lib_init (shm, restricted_status)
+lib_init (name, shm, restricted_status)
+     char *name;
      void *shm;
      int restricted_status;
 {
   SHM_BUF = shm;
+  set_shell_name(name);
   shell_initialize();
   if (restricted_status) {
     scallop_toggle_restricted(restricted_status);
