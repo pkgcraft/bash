@@ -372,6 +372,9 @@ extern void merge_builtin_env PARAMS((void));
 extern void kill_all_local_variables PARAMS((void));
 
 extern void set_var_read_only PARAMS((char *));
+#if defined (BUILD_LIBRARY)
+extern void set_var_read_write PARAMS((char *));
+#endif
 extern void set_func_read_only PARAMS((const char *));
 extern void set_var_auto_export PARAMS((char *));
 extern void set_func_auto_export PARAMS((const char *));
