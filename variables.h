@@ -395,6 +395,9 @@ extern void kill_all_local_variables (void);
 extern HASH_TABLE *copy_vartab (HASH_TABLE *);
 
 extern void set_var_read_only (char *);
+#if defined (BUILD_LIBRARY)
+extern void set_var_read_write (char *);
+#endif
 extern void set_func_read_only (const char *);
 extern void set_var_auto_export (char *);
 extern void set_func_auto_export (const char *);
