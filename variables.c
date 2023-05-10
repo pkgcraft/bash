@@ -4084,6 +4084,19 @@ set_var_read_only (char *name)
   VSETATTR (entry, att_readonly);
 }
 
+#if defined (BUILD_LIBRARY)
+/* Make the variable associated with NAME be read/write. */
+void
+set_var_read_write (char *name)
+{
+  SHELL_VAR *entry;
+
+  entry = find_variable (name);
+  if (entry)
+    VUNSETATTR (entry, att_readonly);
+}
+#endif
+
 #ifdef INCLUDE_UNUSED
 /* Make the function associated with NAME be readonly.
    If NAME does not exist, we just punt, like auto_export code below. */
