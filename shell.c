@@ -2076,6 +2076,7 @@ lib_init (name, shm, restricted_status)
 {
   SHM_BUF = shm;
   set_shell_name(name);
+  shell_environment = environ;
   shell_initialize();
   if (restricted_status) {
     scallop_toggle_restricted(restricted_status);
@@ -2094,6 +2095,7 @@ void
 lib_reset ()
 {
   int orig_restricted = restricted;
+  shell_environment = environ;
   shell_reinitialize();
   restricted = orig_restricted;
   initialize_shell_variables (shell_environment, privileged_mode||restricted||running_setuid);
