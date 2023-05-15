@@ -2072,6 +2072,7 @@ void
 lib_init ()
 {
   set_shell_name("scallop");
+  shell_environment = environ;
   shell_initialize();
 }
 
@@ -2087,6 +2088,7 @@ void
 lib_reset ()
 {
   int orig_restricted = restricted;
+  shell_environment = environ;
   shell_reinitialize();
   restricted = orig_restricted;
   initialize_shell_variables (shell_environment, privileged_mode||restricted||running_setuid);
