@@ -363,7 +363,7 @@ declare_internal (list, local_var)
 	    pflag = show_name_attributes (list->word->word, nodefs);
 	  if (pflag)
 	    {
-	      sh_notfound (list->word->word);
+	      builtin_warning (_("%s: not found"), list->word->word);
 	      any_failed++;
 	    }
 	}
