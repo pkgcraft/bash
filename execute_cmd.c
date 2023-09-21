@@ -4562,7 +4562,7 @@ execute_simple_command (simple_command, pipe_in, pipe_out, async, fds_to_close)
 	 being used, and we don't want to exit the shell if a special
 	 builtin executed with `command builtin' fails.  `command' is not
 	 a special builtin. */
-      if (posixly_correct)
+      if (posixly_correct || BUILD_LIBRARY)
 	{
 	  builtin = find_special_builtin (words->word->word);
 	  if (builtin)
