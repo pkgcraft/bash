@@ -6435,13 +6435,17 @@ int
 scallop_execute_command (COMMAND *command)
 {
   int code, result;
+  volatile procenv_t save_top_level;
 
+  COPY_PROCENV (top_level, save_top_level);
   code = setjmp_nosigs (top_level);
   if (code) {
+    COPY_PROCENV (save_top_level, top_level);
     return EXECUTION_FAILURE;
   }
 
   result = execute_command(command);
+  COPY_PROCENV (save_top_level, top_level);
   QUIT;
   return result;
 }
@@ -6450,13 +6454,17 @@ int
 scallop_execute_shell_function (SHELL_VAR *var, WORD_LIST *words)
 {
   int code, result;
+  volatile procenv_t save_top_level;
 
+  COPY_PROCENV (top_level, save_top_level);
   code = setjmp_nosigs (top_level);
   if (code) {
+    COPY_PROCENV (save_top_level, top_level);
     return EXECUTION_FAILURE;
   }
 
   result = execute_shell_function(var, words);
+  COPY_PROCENV (save_top_level, top_level);
   QUIT;
   return result;
 }
