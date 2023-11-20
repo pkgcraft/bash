@@ -389,13 +389,17 @@ scallop_source_file (filename)
      const char *filename;
 {
   int code, result;
+  volatile procenv_t save_top_level;
 
+  COPY_PROCENV (top_level, save_top_level);
   code = setjmp_nosigs (top_level);
   if (code) {
+    COPY_PROCENV (save_top_level, top_level);
     return EXECUTION_FAILURE;
   }
 
   result = source_file(filename, 0);
+  COPY_PROCENV (save_top_level, top_level);
   return result;
 }
 #endif
