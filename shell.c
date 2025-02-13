@@ -2069,10 +2069,8 @@ scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
 void
-lib_init (shm)
-     void *shm;
+lib_init ()
 {
-  SHM_BUF = shm;
   set_shell_name("scallop");
   shell_environment = environ;
   shell_initialize();
