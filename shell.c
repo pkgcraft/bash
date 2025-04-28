@@ -2066,10 +2066,10 @@ scallop_cb scallop_error;
 scallop_cb scallop_warning;
 
 void
-lib_init ()
+lib_init (char **env)
 {
   set_shell_name("scallop");
-  shell_environment = environ;
+  shell_environment = env;
   shell_initialize();
 }
 
@@ -2081,10 +2081,10 @@ lib_error_handlers (scallop_cb error_cb, scallop_cb warning_cb)
 }
 
 void
-lib_reset ()
+lib_reset (char **env)
 {
   int orig_restricted = restricted;
-  shell_environment = environ;
+  shell_environment = env;
   shell_reinitialize();
   restricted = orig_restricted;
   initialize_shell_variables (shell_environment, privileged_mode||restricted||running_setuid);
