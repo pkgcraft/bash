@@ -117,7 +117,7 @@ Program = bash$(EXEEXT)
 StaticLibrary = libscallop.a
 SharedLibrary = libscallop.so
 Version = @BASHVERS@
-PatchLevel = `$(BUILD_DIR)/$(VERSPROG) -p`
+PatchLevel = $(shell $(BUILD_DIR)/$(VERSPROG) -p)
 RELSTATUS = @RELSTATUS@
 
 Machine = @host_cpu@
