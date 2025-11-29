@@ -114,11 +114,14 @@ VERSPROG = bashversion$(EXEEXT)
 VERSOBJ = bashversion.$(OBJEXT)
 
 Program = bash$(EXEEXT)
-StaticLibrary = libscallop.a
-SharedLibrary = libscallop.so
 Version = @BASHVERS@
 PatchLevel = $(shell $(BUILD_DIR)/$(VERSPROG) -p)
 RELSTATUS = @RELSTATUS@
+
+# scallop settings
+StaticLibrary = libscallop.a
+SharedLibrary = libscallop.so
+PatchDate = 20251129
 
 Machine = @host_cpu@
 OS = @host_os@
@@ -650,8 +653,10 @@ $(StaticLibrary): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
 
 $(SharedLibrary): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
 	$(RM) $@
-	$(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -shared -o $(SharedLibrary).$(Version).$(PatchLevel) $(OBJECTS) $(LIBS)
-	ln -s $(SharedLibrary).$(Version).$(PatchLevel) $(SharedLibrary)
+	$(eval SCALLOP_LIBRARY = $(SharedLibrary).$(Version).$(PatchLevel).$(PatchDate))
+	$(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) \
+		-Wl,-soname,${SCALLOP_LIBRARY} -shared -o ${SCALLOP_LIBRARY} $(OBJECTS) $(LIBS)
+	ln -s ${SCALLOP_LIBRARY} $(SharedLibrary)
 
 .build:	$(SOURCES) config.h Makefile $(DEFDIR)/builtext.h version.h $(VERSPROG)
 	@echo
