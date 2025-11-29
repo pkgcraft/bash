@@ -115,7 +115,7 @@ VERSOBJ = bashversion.$(OBJEXT)
 
 Program = bash$(EXEEXT)
 Version = @BASHVERS@
-PatchLevel = `$(BUILD_DIR)/$(VERSPROG) -p`
+PatchLevel = $(shell $(BUILD_DIR)/$(VERSPROG) -p)
 RELSTATUS = @RELSTATUS@
 
 # scallop targets
