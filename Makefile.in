@@ -656,7 +656,6 @@ $(SharedLibrary): .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
 	$(eval SCALLOP_LIBRARY = $(SharedLibrary).$(Version).$(PatchLevel).$(PatchDate))
 	$(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) \
 		-Wl,-soname,${SCALLOP_LIBRARY} -shared -o ${SCALLOP_LIBRARY} $(OBJECTS) $(LIBS)
-	ln -s ${SCALLOP_LIBRARY} $(SharedLibrary)
 
 .build:	$(SOURCES) config.h Makefile $(DEFDIR)/builtext.h version.h $(VERSPROG)
 	@echo
@@ -946,6 +945,11 @@ install:	.made installdirs
 	-( cd $(DEFDIR) ; $(MAKE) $(BASH_MAKEFLAGS) DESTDIR=$(DESTDIR) $@ )
 	-( cd $(PO_DIR) ; $(MAKE) $(BASH_MAKEFLAGS) DESTDIR=$(DESTDIR) $@ )
 	-( cd $(LOADABLES_DIR) && $(MAKE) $(BASH_MAKEFLAGS) DESTDIR=$(DESTDIR) $@ )
+
+install-library:
+	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(libdir)
+	$(INSTALL) $(INSTALLMODE) $(SharedLibrary).* $(DESTDIR)$(libdir)
+	cd $(DESTDIR)$(libdir) && ln -s $(SharedLibrary).* $(SharedLibrary)
 
 install-strip:
 	$(MAKE) $(BASH_MAKEFLAGS) INSTALL_PROGRAM='$(INSTALL_STRIP_PROGRAM)' \
