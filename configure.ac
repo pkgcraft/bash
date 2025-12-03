@@ -24,9 +24,11 @@ dnl Process this file with autoconf to produce a configure script.
 AC_REVISION([for Bash 5.3, version 5.080])dnl
 
 define(bashvers, 5.3)
+define(patchlevel, 9)
+define(patchdate, 20251212)
 define(relstatus, release)
 
-AC_INIT([bash], bashvers-relstatus, [bug-bash@gnu.org])
+AC_INIT([scallop], bashvers.patchlevel.patchdate, [bug-bash@gnu.org])
 
 dnl make sure we are using a recent autoconf version
 AC_PREREQ(2.69)
@@ -432,7 +434,7 @@ if test -z "$CFLAGS"; then
 fi
 
 echo ""
-echo "Beginning configuration for bash-$BASHVERS-$RELSTATUS for ${host_cpu}-${host_vendor}-${host_os}"
+echo "Beginning configuration for $PACKAGE_NAME-$PACKAGE_VERSION for ${host_cpu}-${host_vendor}-${host_os}"
 echo ""
 
 dnl compilation checks
