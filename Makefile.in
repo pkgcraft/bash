@@ -508,11 +508,11 @@ INSTALLED_HEADERS = shell.h bashjmp.h command.h syntax.h general.h error.h \
 		    bashtypes.h xmalloc.h config-top.h config-bot.h \
 		    bashintl.h bashansi.h bashjmp.h alias.h hashlib.h \
 		    conftypes.h unwind_prot.h jobs.h siglist.h \
-		    execute_cmd.h
+		    execute_cmd.h input.h pathexp.h flags.h
 # these can appear in either the source directory or the build directory and
 # are installed by install-headers
 HYBRID_HEADERS = y.tab.h
-INSTALLED_BUILTINS_HEADERS = bashgetopt.h common.h getopt.h
+INSTALLED_BUILTINS_HEADERS = builtext.h bashgetopt.h common.h getopt.h
 INSTALLED_INCLUDE_HEADERS = posixstat.h ansi_stdlib.h filecntl.h posixdir.h \
 	memalloc.h stdc.h posixjmp.h posixwait.h posixtime.h systimes.h \
 	unionwait.h maxpath.h shtty.h typemax.h ocache.h chartypes.h gettext.h \
