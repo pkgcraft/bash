@@ -991,7 +991,7 @@ install-headers: maybe-install-headers
 			${INSTALL_DATA} $(srcdir)/"$$hf" $(DESTDIR)$(headersdir)/$$hf || exit 1; \
 		fi ; \
 	done
-	-$(INSTALL_DATA) $(SUPPORT_DIR)/bash.pc $(DESTDIR)$(pkgconfigdir)/bash.pc
+	-$(INSTALL_DATA) $(SUPPORT_DIR)/$(PACKAGE).pc $(DESTDIR)$(pkgconfigdir)/$(PACKAGE).pc
 
 uninstall-headers-dirs:
 	-$(RMDIR) $(DESTDIR)$(headersdir)/builtins $(DESTDIR)$(headersdir)/include
@@ -1006,7 +1006,7 @@ uninstall-headers:
 	for hf in $${SDH} ; do \
 		( cd $(DESTDIR)$(headersdir) && $(RM) $$(basename "$$hf") ) \
 	done
-	-( $(RM) $(DESTDIR)$(pkgconfigdir)/bash.pc )
+	-( $(RM) $(DESTDIR)$(pkgconfigdir)/$(PACKAGE).pc )
 	# uninstall-headers-dirs
 	-$(RMDIR) $(DESTDIR)$(headersdir)/builtins $(DESTDIR)$(headersdir)/include
 	-$(RMDIR) $(DESTDIR)$(headersdir)
