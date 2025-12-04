@@ -1,0 +1,108 @@
+name: release
+
+on:
+  push:
+    tags: [scallop-*]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.release.outputs.release }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Get the release name
+      id: release
+      run: |
+        name=$(sed -rn "/^PACKAGE_NAME=/ s/^.*='(.*)'/\1/p" configure)
+        version=$(sed -rn "/^PACKAGE_VERSION=/ s/^.*='(.*)'/\1/p" configure)
+        release=${name}-${version}
+        ref=${{ github.ref_name }}
+
+        # verify tag name matches configure script
+        if [[ ${ref} != main && ${ref} != ${release} ]]; then
+          echo "tag name ${ref} doesn't match package: ${release}"
+          exit 1
+        fi
+
+        echo "release=${release}" >> $GITHUB_OUTPUT
+        echo "version=${version}" >> $GITHUB_OUTPUT
+
+  source:
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      RELEASE: ${{ needs.release.outputs.release }}
+      VERSION: ${{ needs.release.outputs.version }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        path: bash
+
+    - name: Copy release files
+      run: |
+        # remove unused files
+        rm -r bash/{doc,examples,tests,po}
+
+        # copy release files
+        mkdir ${RELEASE}
+        cp -a bash/* ${RELEASE}
+
+
+    - name: Build and install
+      run: |
+        # copy release files
+        cp -a ${RELEASE} ${RELEASE}-test
+        cd ${RELEASE}-test
+
+        # configure using required scallop options
+        ./configure-scallop
+
+        # build static and shared libraries
+        make -j libscallop.a libscallop.so
+
+        # install shared library and headers
+        sudo make install-library install-headers
+
+    - name: Test
+      run: |
+        # verify shared library is installed and pkg-config works as expected
+        pkg-config --modversion scallop
+        pkg-config --exact-version ${VERSION} scallop
+
+    - name: Create tarball
+      run: tar -c -I "xz -9 -T0" -f ${RELEASE}.tar.xz ${RELEASE}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v5
+      with:
+        name: source
+        path: ./*.tar.xz
+        if-no-files-found: error
+        retention-days: 3
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: source
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v6
+      with:
+        path: artifacts
+        merge-multiple: true
+
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifacts/*.tar.xz
+        fail_on_unmatched_files: true
