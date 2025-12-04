@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+includedir=@includedir@
+libdir=@libdir@
+headersdir=${includedir}/@PACKAGE_NAME@
+
+Name: @PACKAGE_NAME@
+Description: Fork of bash enabling integration into pkgcraft
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -l@PACKAGE_NAME@
+Cflags: -I${headersdir} -I${headersdir}/builtins -I${headersdir}/include
