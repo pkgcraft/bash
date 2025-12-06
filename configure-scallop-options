@@ -1,0 +1,19 @@
+# configure options required by scallop
+
+--disable-readline
+--disable-history
+--disable-bang-history
+--disable-progcomp
+--without-bash-malloc
+--disable-mem-scramble
+--disable-net-redirections
+--disable-nls
+
+# job control is required for $PIPESTATUS
+--enable-job-control
+
+# enable restricted shell
+--enable-restricted
+
+# enable scallop library
+--enable-library
