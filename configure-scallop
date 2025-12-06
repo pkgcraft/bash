@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Configure bash using the required scallop options.
+
+# change working directory to bash repo
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+# load required configure options
+declare -a myconf
+while IFS= read -r line; do
+	[[ -z ${line} || ${line} =~ ^# ]] && continue
+	myconf+=( ${line} )
+done < configure-scallop-options
+
+# configure using defined options
+./configure "${myconf[@]}"
