@@ -1,0 +1,57 @@
+name: test
+
+on:
+  push:
+    branches: '**'
+  workflow_dispatch:
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Get the package version
+      id: version
+      run: |
+        version=$(sed -rn "/^PACKAGE_VERSION=/ s/^.*='(.*)'/\1/p" configure)
+        date=${version##*.}
+        expected_date=$(date -u +"%Y%m%d")
+
+        # verify patch date
+        if [[ ${date} != ${expected_date} ]]; then
+          echo outdated scallop patch date: ${date}
+          exit 1
+        fi
+
+        echo "version=${version}" >> $GITHUB_OUTPUT
+
+  test:
+    needs: version
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Build and install
+      run: |
+        # configure using required scallop options
+        ./configure-scallop
+
+        # build static and shared libraries
+        make -j libscallop.a libscallop.so
+
+        # install shared library and headers
+        sudo make install-library install-headers
+
+    - name: Test
+      run: |
+        # verify shared library is installed and pkg-config works as expected
+        pkg-config --modversion scallop
+        pkg-config --exact-version ${VERSION} scallop
