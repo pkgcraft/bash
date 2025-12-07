@@ -91,7 +91,6 @@ extern int no_options (WORD_LIST *);
 
 #if defined (BUILD_LIBRARY)
 /* scallop extensions */
-extern int register_builtins (struct builtin **, size_t);
 extern int scallop_source_file (const char *);
 extern int scallop_evalstring (const char *, int);
 #endif
@@ -149,6 +148,7 @@ extern sh_builtin_func_t *find_shell_builtin (const char *);
 extern sh_builtin_func_t *builtin_address (const char *);
 extern sh_builtin_func_t *find_special_builtin (const char *);
 extern void initialize_shell_builtins (void);
+extern int register_builtins (struct builtin **, size_t);
 
 #if defined (ARRAY_VARS)
 extern int set_expand_once (int, int);
