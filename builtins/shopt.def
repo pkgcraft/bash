@@ -777,7 +777,7 @@ get_shopt_options (void)
   n = sizeof (shopt_vars) / sizeof (shopt_vars[0]);
   ret = strvec_create (n + 1);
   for (i = 0; shopt_vars[i].name; i++)
-    ret[i] = savestring (shopt_vars[i].name);
+    ret[i] = shopt_vars[i].name;
   ret[i] = (char *)NULL;
   return ret;
 }
