@@ -1099,10 +1099,7 @@ set_expand_once (int nval, int uwp)
 }
 #endif
 
-#if defined (BUILD_LIBRARY)
-/* Register a given array of new builtins into the internal list.
- * (Mostly copied from the enable builtin used when loading dynamic builtins.)
- */
+/* Register a given array of new builtins into the internal list. */
 int
 register_builtins (struct builtin **new_builtins, size_t num_new_builtins)
 {
@@ -1133,4 +1130,3 @@ register_builtins (struct builtin **new_builtins, size_t num_new_builtins)
 
   return (EXECUTION_SUCCESS);
 }
-#endif
